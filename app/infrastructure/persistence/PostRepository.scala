@@ -14,7 +14,13 @@ object PostRepository {
   val mapper = new ObjectMapper()
   mapper.registerModule(DefaultScalaModule)
 
-  val mongoClient = new MongoClient()
+  val mongoClient = {
+    val url = System.getProperty("MONGOLAB_URI")
+    if(url != null)
+      new MongoClient(url)
+    else
+      new MongoClient()
+  }
   val db = mongoClient.getDB("scalablog");
   val postColl = db.getCollection("posts");
 
