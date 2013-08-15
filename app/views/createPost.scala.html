@@ -1,0 +1,48 @@
+@(form: Form[(String, String, String, String, String)])
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title>Create post</title>
+        <link href="@routes.Assets.at("/stylesheets/main.css")" rel="stylesheet" type="text/css" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
+    </head>
+    <body>
+        <header>
+            <p class="meta">
+                <img src="@routes.Assets.at("/images/scala.png")" alt="Scala programming" />
+            </p>
+            <h1><a href="/">Scala<strong>Programming</strong></a></h1>
+        </header>
+
+        <article>
+
+            <p class="meta date">
+                <strong>New post</strong>
+
+            </p>
+            @helper.form(action = routes.Application.submitPost) {
+
+                <input name="title" type="text" placeholder="Title?" /> <br/>
+                <textarea name="summary" data-provide="summary" rows="5" cols="90">
+                </textarea> <br/>
+                <textarea name="content" data-provide="markdown" rows="20" cols="90">
+                </textarea> <br/>
+                <input name="tags" type="text" placeholder="Tags" /> <br/>
+                <label class="checkbox">
+                    <input name="publish" type="checkbox"/>Publish
+                </label> <br/>
+
+                <hr/>
+                <input name="password" type="text" placeholder="Password" /> <br/>
+                <button type="submit" class="btn">Submit</button>
+            }
+
+        </article>
+
+
+        <footer>
+        </footer>
+
+    </body>
+</html>
