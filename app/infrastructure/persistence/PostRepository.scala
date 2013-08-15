@@ -1,6 +1,6 @@
 package infrastructure.persistence
 
-import com.mongodb.{BasicDBObject, MongoClient}
+import com.mongodb.{MongoClientURI, MongoURI, BasicDBObject, MongoClient}
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import java.io.StringWriter
@@ -14,14 +14,9 @@ object PostRepository {
   val mapper = new ObjectMapper()
   mapper.registerModule(DefaultScalaModule)
 
-  val mongoClient = {
-    val url = System.getProperty("MONGOLAB_URI")
-    if(url != null)
-      new MongoClient(url)
-    else
-      new MongoClient()
-  }
-  val db = mongoClient.getDB("scalablog");
+  val connectionURL = if (System.getenv("MONGOLAB_URI") != null) System.getenv("MONGOLAB_URI") else "mongodb://127.0.0.1:27017/hello"
+  val client = new MongoClient(new MongoClientURI(connectionURL))
+  val db = client.getDB("scalablog")
   val postColl = db.getCollection("posts");
 
   def savePost(post: Post) {
