@@ -23,7 +23,7 @@ object ConfigRepository {
     println("Authenticate MongoLab")
     db.authenticate(mongoURI.getUsername(), mongoURI.getPassword())
   }
-  val postColl = db.getCollection("posts")
+  val postColl = db.getCollection("config")
 
 
 
