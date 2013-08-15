@@ -13,10 +13,12 @@ object ConfigRepository {
   val mapper = new ObjectMapper()
   mapper.registerModule(DefaultScalaModule)
 
-
   val connectionURL = if (System.getenv("MONGOLAB_URI") != null) System.getenv("MONGOLAB_URI") else "mongodb://127.0.0.1:27017/hello"
-  val client = new MongoClient(new MongoClientURI(connectionURL))
+  private val mongoURI: MongoClientURI = new MongoClientURI(connectionURL)
+  val client = new MongoClient(mongoURI)
+
   val db = client.getDB("scalablog")
+  db.authenticate(mongoURI.getUsername(), mongoURI.getPassword());
   val postColl = db.getCollection("posts");
 
 
