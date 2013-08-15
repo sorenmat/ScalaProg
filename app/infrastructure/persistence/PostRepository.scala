@@ -19,7 +19,11 @@ object PostRepository {
   val client = new MongoClient(mongoURI)
 
   val db = client.getDB("scalablog")
-  db.authenticate(mongoURI.getUsername(), mongoURI.getPassword());
+
+  if (mongoURI.getUsername() != null) {
+    println("Authenticate MongoLab")
+    db.authenticate(mongoURI.getUsername(), mongoURI.getPassword());
+  }
   val postColl = db.getCollection("posts");
 
   def savePost(post: Post) {
