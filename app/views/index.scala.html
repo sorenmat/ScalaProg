@@ -1,4 +1,5 @@
-@(posts: List[model.Post])
+@(posts: List[model.Post], subscriptionform: Form[String], successfulPost: Option[Boolean])
+@import helper._
 <!DOCTYPE html>
 <html>
     <head>
@@ -25,6 +26,19 @@
             <div class="aside">
                 The best way to contact me is on Twitter.
                 <a href="https://twitter.com/sorenmat" class="twitter-follow-button" data-show-count="false">Followe on Twitter</a>
+                    <br/>
+                @helper.form(action = routes.Application.submitSubscription) {
+                    @inputText(
+                        subscriptionform("subscribe"),
+                        '_label -> "Subscribe to updates",
+                        '_help -> "Please enter email for subscriptions mail.",
+                        '_error -> subscriptionform.globalError
+                    )
+
+                }
+                @if(successfulPost.getOrElse(false)) {
+                    <span><b>Thank you for subscribing</b></span>
+                }
             </div>
             <p>Blog about the scala programming language, and other program related things</p>
         </section>

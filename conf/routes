@@ -4,12 +4,14 @@
 
 # Home page
 GET         /                    controllers.Application.index
-GET         /post/:id         controllers.Application.getPost(id: java.util.UUID)
-POST        /post/:id         controllers.Application.submitComment(id: java.util.UUID)
+GET         /post/:id            controllers.Application.getPost(id: java.util.UUID)
+POST        /post/:id            controllers.Application.submitComment(id: java.util.UUID)
 
 GET         /createPost          controllers.Application.createPost
-POST        /createPost          controllers.Application.createPost
+# POST        /createPost          controllers.Application.createPost
 POST        /submitPost          controllers.Application.submitPost
+
+POST        /                   controllers.Application.submitSubscription
 
 
 # Map static resources from the /public folder to the /assets URL path

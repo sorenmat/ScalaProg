@@ -1,6 +1,6 @@
 package infrastructure.persistence
 
-import com.mongodb.{MongoClientURI, MongoURI, BasicDBObject, MongoClient}
+import com.mongodb.BasicDBObject
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import java.io.StringWriter
@@ -11,20 +11,8 @@ import java.util.UUID
  * User: soren
  */
 object PostRepository {
-  val mapper = new ObjectMapper()
-  mapper.registerModule(DefaultScalaModule)
+  val mapper = new ObjectMapper().registerModule(DefaultScalaModule)
 
-  val connectionURL = if (System.getenv("MONGOLAB_URI") != null) System.getenv("MONGOLAB_URI") else "mongodb://127.0.0.1:27017/scalablog"
-  private val mongoURI: MongoClientURI = new MongoClientURI(connectionURL)
-  val client = new MongoClient(mongoURI)
-
-  val db = client.getDB(mongoURI.getDatabase)
-
-  if (mongoURI.getUsername() != null) {
-    println("Authenticate MongoLab")
-    db.authenticate(mongoURI.getUsername(), mongoURI.getPassword())
-  }
-  val postColl = db.getCollection("posts")
 
   def savePost(post: Post) {
     require(post.id != null)
@@ -32,7 +20,7 @@ object PostRepository {
     saveObject.put("post", getJson(post))
     saveObject.put("id", post.id.toString)
 
-    postColl.save(saveObject)
+    MongoPersister.collection("posts").save(saveObject)
   }
 
   def updatePost(post: Post) {
@@ -41,7 +29,7 @@ object PostRepository {
     saveObject.put("post", getJson(post))
     saveObject.put("id", post.id.toString)
 
-    postColl.update(new BasicDBObject("id", post.id.toString), saveObject)
+    MongoPersister.collection("posts").update(new BasicDBObject("id", post.id.toString), saveObject)
   }
 
   def getJson(post: Post) = {
@@ -53,7 +41,7 @@ object PostRepository {
 
   def allPosts = {
     var posts: List[Post] = Nil
-    val cursor = postColl.find()
+    val cursor = MongoPersister.collection("posts").find()
     while (cursor.hasNext) {
       val obj = cursor.next().get("post").asInstanceOf[String]
       val post = mapper.readValue(obj, classOf[Post])
@@ -65,7 +53,7 @@ object PostRepository {
 
   def getPostFromID(id: UUID) = {
     val searchValue = new BasicDBObject("id", id.toString)
-    val searchResult = postColl.findOne(searchValue)
+    val searchResult = MongoPersister.collection("posts").findOne(searchValue)
     val obj = searchResult.get("post").asInstanceOf[String]
     mapper.readValue(obj, classOf[Post])
   }

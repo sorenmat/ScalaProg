@@ -4,17 +4,21 @@ import play.api.mvc._
 import model.Comment
 import play.api.data._
 import play.api.data.Forms._
-import infrastructure.persistence.{ConfigRepository, PostRepository}
+import infrastructure.persistence.{SubscriptionRepository, ConfigRepository, PostRepository}
 import model.Post
 import java.text.SimpleDateFormat
 import java.util.{UUID, Date}
+import model.Comment
+import model.Post
+import model.Comment
+import model.Post
 
 object Application extends Controller {
 
 
   def index = Action {
 
-    Ok(views.html.index(PostRepository.allPosts))
+    Ok(views.html.index(PostRepository.allPosts, subscriptionForm, None))
   }
 
   def getPost(id: UUID) = Action {
@@ -96,4 +100,29 @@ object Application extends Controller {
       )
 
   }
+
+
+  val subscriptionForm = Form(
+    single(
+      "subscribe" -> email.verifying("Email not unique", email => SubscriptionRepository.subscriptionExists(email))
+    )    )
+
+  def submitSubscription = Action {
+    implicit request =>
+      subscriptionForm.bindFromRequest.fold(
+        formWithErrors => {
+          println("Failure....")
+          BadRequest(views.html.index(PostRepository.allPosts, formWithErrors, Some(false)))
+
+        },
+        enteredEmail => {
+          SubscriptionRepository.saveSubscription(enteredEmail)
+          println("Successful subscription "+enteredEmail)
+          Ok(views.html.index(PostRepository.allPosts, subscriptionForm, Some(true)))
+        }
+      )
+
+  }
+
+
 }
